@@ -58,35 +58,48 @@ public class QuantityMeasurementApp {
             return new QuantityLength(convertedValue, targetUnit);
         }
 
+        // Addition instance method
+        public QuantityLength add(QuantityLength other) {
+            if (other == null) {
+                throw new IllegalArgumentException("Other quantity cannot be null");
+            }
+
+            double thisInFeet = this.unit.toFeet(this.value);
+            double otherInFeet = other.unit.toFeet(other.value);
+
+            double sumInFeet = thisInFeet + otherInFeet;
+            double sumInTargetUnit = this.unit.fromFeet(sumInFeet);
+
+            return new QuantityLength(sumInTargetUnit, this.unit);
+        }
+
         @Override
         public String toString() {
             return value + " " + unit.name();
         }
     }
 
-    // Static conversion API
-    public static double convert(double value, LengthUnit source, LengthUnit target) {
-        if (source == null || target == null) {
-            throw new IllegalArgumentException("Units cannot be null");
-        }
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Value must be finite");
-        }
-        double valueInFeet = source.toFeet(value);
-        return target.fromFeet(valueInFeet);
-    }
-
     // Demo main method
     public static void main(String[] args) {
-        System.out.println("1 foot to inches: " + convert(1.0, LengthUnit.FEET, LengthUnit.INCH)); // 12.0
-        System.out.println("3 yards to feet: " + convert(3.0, LengthUnit.YARD, LengthUnit.FEET));   // 9.0
-        System.out.println("36 inches to yards: " + convert(36.0, LengthUnit.INCH, LengthUnit.YARD)); // 1.0
-        System.out.println("1 cm to inches: " + convert(1.0, LengthUnit.CENTIMETER, LengthUnit.INCH)); // ~0.393701
-        System.out.println("0 feet to inches: " + convert(0.0, LengthUnit.FEET, LengthUnit.INCH)); // 0.0
+        QuantityLength feet1 = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength feet2 = new QuantityLength(2.0, LengthUnit.FEET);
+        System.out.println("1 foot + 2 feet = " + feet1.add(feet2)); // 3 FEET
 
-        // Instance method usage
-        QuantityLength lengthInFeet = new QuantityLength(2.0, LengthUnit.FEET);
-        QuantityLength lengthInInches = lengthInFeet.convertTo(LengthUnit.INCH);
-        System.out.println("2 feet converted to inches: " + lengthInInches);
+        QuantityLength inch12 = new QuantityLength(12.0, LengthUnit.INCH);
+        System.out.println("1 foot + 12 inches = " + feet1.add(inch12)); // 2 FEET
+
+        System.out.println("12 inches + 1 foot = " + inch12.add(feet1)); // 24 INCH
+
+        QuantityLength yard1 = new QuantityLength(1.0, LengthUnit.YARD);
+        QuantityLength feet3 = new QuantityLength(3.0, LengthUnit.FEET);
+        System.out.println("1 yard + 3 feet = " + yard1.add(feet3)); // 2 YARD
+
+        QuantityLength cm2_54 = new QuantityLength(2.54, LengthUnit.CENTIMETER);
+        QuantityLength inch1 = new QuantityLength(1.0, LengthUnit.INCH);
+        System.out.println("2.54 cm + 1 inch = " + cm2_54.add(inch1)); // ~5.08 CENTIMETER
+
+        QuantityLength feet5 = new QuantityLength(5.0, LengthUnit.FEET);
+        QuantityLength feetMinus2 = new QuantityLength(-2.0, LengthUnit.FEET);
+        System.out.println("5 feet + (-2 feet) = " + feet5.add(feetMinus2)); // 3 FEET
     }
 }
