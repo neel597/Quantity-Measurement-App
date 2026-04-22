@@ -2,8 +2,10 @@ public class QuantityMeasurementApp {
 
     // Enum for supported length units
     public enum LengthUnit {
-        FEET(1.0),          // base unit
-        INCH(1.0 / 12.0);   // 1 inch = 1/12 foot
+        FEET(1.0),                // base unit
+        INCH(1.0 / 12.0),         // 1 inch = 1/12 foot
+        YARD(3.0),                // 1 yard = 3 feet
+        CENTIMETER(0.0328084);    // 1 cm = 0.0328084 feet (since 1 cm = 0.393701 inch)
 
         private final double conversionFactor;
 
@@ -44,12 +46,19 @@ public class QuantityMeasurementApp {
 
     // Demo main method
     public static void main(String[] args) {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
-        QuantityLength q3 = new QuantityLength(1.0, LengthUnit.INCH);
+        QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARD);
+        QuantityLength feet = new QuantityLength(3.0, LengthUnit.FEET);
+        QuantityLength inches = new QuantityLength(36.0, LengthUnit.INCH);
+        QuantityLength cm = new QuantityLength(1.0, LengthUnit.CENTIMETER);
+        QuantityLength inchEquivalent = new QuantityLength(0.393701, LengthUnit.INCH);
 
-        System.out.println("1 foot vs 12 inches: " + q1.equals(q2)); // true
-        System.out.println("1 inch vs 1 inch: " + q3.equals(new QuantityLength(1.0, LengthUnit.INCH))); // true
-        System.out.println("1 foot vs 2 feet: " + q1.equals(new QuantityLength(2.0, LengthUnit.FEET))); // false
+        System.out.println("1 yard vs 3 feet: " + yard.equals(feet));          // true
+        System.out.println("1 yard vs 36 inches: " + yard.equals(inches));     // true
+        System.out.println("2 yards vs 2 yards: " +
+            new QuantityLength(2.0, LengthUnit.YARD).equals(new QuantityLength(2.0, LengthUnit.YARD))); // true
+        System.out.println("2 cm vs 2 cm: " +
+            new QuantityLength(2.0, LengthUnit.CENTIMETER).equals(new QuantityLength(2.0, LengthUnit.CENTIMETER))); // true
+        System.out.println("1 cm vs 0.393701 inches: " + cm.equals(inchEquivalent)); // true
+        System.out.println("1 yard vs 2 feet: " + yard.equals(new QuantityLength(2.0, LengthUnit.FEET))); // false
     }
 }
